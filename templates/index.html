@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Workout Log</title>
+</head>
+<body>
+
+    <ul>
+        <li><a href="/">VIEW LOG</a></li>
+        <li><a href="/add">ADD WORKOUT</a></li>
+    </ul>
+
+    <hr>
+
+    <h1>My Training History</h1>
+
+    {% for workout in workouts %}
+        <div>
+            <h2>{{ workout.title }}</h2>
+            <p>Date: {{ workout.date_posted.strftime("%Y-%m-%d") }}</p>
+
+            <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Delete this workout permanently?')" style="color: red; cursor: pointer;">
+                    [DELETE]
+                </button>
+            </form>
+
+            <ul>
+                {% for s in workout.sets %}
+                    <li><strong>{{ s.exercise_name }}</strong>: {{ s.weight }}kg x {{ s.reps }} Reps</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <hr>
+    {% endfor %}
+</body>
+</html>
