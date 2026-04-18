@@ -4,36 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Workout Log</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-    <ul>
-        <li><a href="/">VIEW LOG</a></li>
-        <li><a href="/add">ADD WORKOUT</a></li>
-    </ul>
-
+    <nav id="navbar">
+        <ul>
+            <li><a href="/">VIEW LOG</a></li>
+            <li><a href="/add">ADD WORKOUT</a></li>
+        </ul>
+    </nav>
+    
     <hr>
 
-    <h1>My Training History</h1>
+    <div class="main-container">
+        <h1>My Training History</h1>
 
-    {% for workout in workouts %}
-        <div>
-            <h2>{{ workout.title }}</h2>
-            <p>Date: {{ workout.date_posted.strftime("%Y-%m-%d") }}</p>
+        {% for workout in workouts %}
+            <div class="workout-card">
+                <div class="workout-header">
+                    <h2>{{ workout.title }}</h2>
+                    <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Delete this workout permanently?')">Delete Workout</button>    
+                    </form>   
+                </div>
+                <p class="date-text">Date: {{ workout.date_posted.strftime("%Y-%m-%d") }}</p>
 
-            <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Delete this workout permanently?')" style="color: red; cursor: pointer;">
-                    [DELETE]
-                </button>
-            </form>
-
-            <ul>
-                {% for s in workout.sets %}
-                    <li><strong>{{ s.exercise_name }}</strong>: {{ s.weight }}kg x {{ s.reps }} Reps</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <hr>
-    {% endfor %}
+                <div class="exercise-container">
+                    {% for exercise_name, sets in workout.grouped_sets.items() %}
+                        <div class="exercise-group-card">  
+                            <div class="exercise-name-header">{{ exercise_name }}</div>
+                            
+                            <div class="sets-list">
+                                {% for s in sets %}
+                                    <div class="set-row">
+                                        <span class="set-number">Set {{ loop.index }}:</span>
+                                        <span class="set-data"><strong>{{ s.weight }}</strong>kg x <strong>{{ s.reps }}</strong> Reps</span>                                                   
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
 </body>
 </html>

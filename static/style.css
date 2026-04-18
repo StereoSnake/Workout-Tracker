@@ -1,0 +1,226 @@
+/*  ============================================================================================
+    1. GLOBAL FOUNDATION
+    Setting the theme, colors, and fonts for the entire app.
+    ============================================================================================*/
+
+body {
+    background-color: #1e1f20;
+    color: #e3e3e3;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+hr {
+    display: none;
+}
+
+/*  Base link styles */
+a {
+    color: #8ab4f8;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+a:hover {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/*  ============================================================================================
+    2. NAVIGATION BAR
+    Using the ID #navbar to ensure these styles only apply to the top menu.
+    ============================================================================================*/
+
+#navbar {
+    background-color: #2b2c2f;
+    padding: 15px 30px;
+    border-bottom: 1px solid #444746;
+    display: flex;
+    justify-content: flex-start;
+}
+
+#navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 50px;
+}
+
+#navbar a {
+    color: #8ab4f8;
+    text-decoration: none;
+    font-weight: 550;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    transition: color 0.2s ease;
+}
+
+#navbar a:hover {
+    color: #ffffff;
+}
+
+/*  ============================================================================================
+    3. MAIN LAYOUT CONTAINER
+    This centers the content and keeps it from stretching too wide.
+    ============================================================================================*/
+
+.main-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/*  ============================================================================================
+    4. WORKOUT CARDS
+    The main wrapper for a single training session
+    ============================================================================================*/
+
+.workout-card {
+    background-color: #2b2c2f;
+    border: 1px solid #444746;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: border-color 0.3s ease;
+}
+
+.workout-card:hover {
+    border-color: #5f6368;
+}
+
+.workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.workout-header h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.4rem;
+}
+
+.date-text {
+    color: #9aa0a6;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/*  ============================================================================================
+    5. EXERCISE GROUPS (The Nested Cards)
+    Style for the grouped exercises (e.g., "Bench Press") within a workout.
+    ============================================================================================*/
+
+.exercise-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.exercise-group-card {
+    background-color: #1e1f20;
+    border: 1px solid #3c4043;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.exercise-name-header {
+    background-color: rgba(138, 180, 248, 0.08);
+    color: #8ab4f8;
+    padding: 8px 15px;
+    font-weight: normal;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid #3c4043;
+}
+
+.sets-list {
+    padding: 10px 15px;
+}
+
+.set-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 0.95rem;
+}
+
+.set-row:not(:last-child) {
+    border-bottom: 1px dotted #3c4043;
+}
+
+.set-number {
+    color: #9aa0a6;
+}
+
+.set-data {
+    color: #9aa0a6;
+}
+
+/*  ============================================================================================
+    5. FORMS & INPUTS
+    Styling for the "Add Workout" page.
+    ============================================================================================*/
+
+#workout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    background-color: #1e1f20;
+    color: #e3e3e3;
+    border: 1px solid #5f6368;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #8ab4f8;
+}
+
+/*  ============================================================================================
+    7. BUTTONS
+    ============================================================================================*/
+
+.btn-save {
+    background-color: #8ab4f8;
+    color: #1e1f20;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 15px;
+}
+
+.btn.save:hover {
+    background-color: #aecbfa;
+}
+
+.btn-delete {
+    background: none;
+    border: 1px solid #f28b82;
+    color: #f28b82;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: 0.2s;
+}
+
+.btn-delete:hover {
+    background-color: rgba(242, 139, 130, 0.1);
+}

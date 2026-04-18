@@ -34,6 +34,15 @@ class ExerciseType(db.Model):
 @app.route("/")
 def index():
     workouts = Workout.query.order_by(Workout.date_posted.desc()).all()
+
+    for workout in workouts:
+        grouped = {}
+        for s in workout.sets:
+            if s.exercise_name not in grouped:
+                grouped[s.exercise_name] = []
+            grouped[s.exercise_name].append(s)
+        workout.grouped_sets = grouped
+
     return render_template("index.html", workouts=workouts)
 
 @app.route("/add", methods=["GET", "POST"])
@@ -84,7 +93,7 @@ def delete_workout(workout_id):
         return "There was a problem deleting that workout."
     
 def seed_exercise_library():
-    """Populates the database with the initial exercises if they don´t exist."""
+    #Populates the database with the initial exercises if they don´t exist.
     exercise_library = {
         "Chest": ["Incline Barbell Bench Press", "Incline DB Press", "Incline DB Flyes", "Flat Barbell Bench Press",
                   "Flat DB Press", "Flat DB Flyes", "Cable Fyles", "Push-ups", "Dips"],
