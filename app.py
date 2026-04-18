@@ -8,20 +8,31 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///workout.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
+# ==========================================
+# MODELS
+# ==========================================
+
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    sets = db.relationship("ExerciseSet", backref="parent_workout", cascade="all, delete-orphan", lazy=True)
+    # Relationship: A Workout has many ExerciseEntries
+    entries = db.relationship("ExerciseEntry", backref="parent_workout", cascade="all, delete-orphan", lazy=True)
 
-class ExerciseSet(db.Model):
+class ExerciseEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     exercise_name = db.Column(db.String(100), nullable=False)
+    workout_id = db.Column(db.Integer, db.ForeignKey("workout.id"), nullable=False)
+
+    # Relationship: An ExerciseEntry has many SetRecords
+    sets = db.relationship("SetRecord", backref="parent_entry", cascade="all, delete-orphan", lazy=True)
+
+class SetRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     weight = db.Column(db.Integer, nullable=False)
     reps = db.Column(db.Integer, nullable=False)
-
-    workout_id = db.Column(db.Integer, db.ForeignKey("workout.id"), nullable=False)
+    entry_id = db.Column(db.Integer, db.ForeignKey("exercise_entry.id"), nullable=False)
 
 class ExerciseType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,18 +42,15 @@ class ExerciseType(db.Model):
     def __repr__(self):
         return f"<ExerciseType {self.name} ({self.muscle_group})>"
 
+# ==========================================
+# ROUTES
+# ==========================================
+
 @app.route("/")
 def index():
+    # Because of the relationships, we just fetch workouts.
+    # We can access entries and sets directly in the HTML template.
     workouts = Workout.query.order_by(Workout.date_posted.desc()).all()
-
-    for workout in workouts:
-        grouped = {}
-        for s in workout.sets:
-            if s.exercise_name not in grouped:
-                grouped[s.exercise_name] = []
-            grouped[s.exercise_name].append(s)
-        workout.grouped_sets = grouped
-
     return render_template("index.html", workouts=workouts)
 
 @app.route("/add", methods=["GET", "POST"])
@@ -52,27 +60,37 @@ def add_workout():
 
         new_workout = Workout(title=title)
         db.session.add(new_workout)
-        db.session.flush()
+        db.session.flush()  #Populates new_workout.id
 
-        exercise_names = request.form.getlist("ex_name")
-        weights = request.form.getlist("weight")
-        reps_list = request.form.getlist("reps")
+        # Loop through the 5 possible exercise blocks from the form
+        for i in range(1, 6):
+            # Each block has its own unique name attribute: ex_name_1, ex_name_2, etc.
+            name = request.form.get(f"ex_name_{i}")
 
-        for name, w, r in zip(exercise_names, weights, reps_list):
-            if name and w and r:
-                new_set = ExerciseSet(
-                    exercise_name = name,
-                    weight = int(w),
-                    reps = int(r),
-                    workout_id = new_workout.id
-                )
-                db.session.add(new_set)
+            if name:    # If the user selected an exercise for this block
+                new_entry = ExerciseEntry(exercise_name=name, workout_id=new_workout.id)
+                db.session.add(new_entry)
+                db.session.flush()  #Populates new_entry.id
+
+                # Get all weights and reps for this specific exercise block
+                weights = request.form.getlist(f"weight_{i}")
+                reps_list = request.form.getlist(f"reps_{i}")
+
+                for w, r in zip(weights, reps_list):
+                    # Only save the set if BOTH weight and reps are filled out
+                    if w and r:
+                        new_set = SetRecord(
+                            weight=int(w),
+                            reps=int(r),
+                            entry_id=new_entry.id
+                        )
+                        db.session.add(new_set)
         
         db.session.commit()
         return redirect(url_for("index"))
     
+    # Logic for GET request (displaying the form)
     all_types = ExerciseType.query.order_by(ExerciseType.muscle_group, ExerciseType.name).all()
-
     grouped_exercises = {}
     for etype in all_types:
         if etype.muscle_group not in grouped_exercises:
@@ -91,6 +109,10 @@ def delete_workout(workout_id):
         return redirect(url_for("index"))
     except:
         return "There was a problem deleting that workout."
+
+# ==========================================
+# DATABASE INITIALIZATION
+# ==========================================
     
 def seed_exercise_library():
     #Populates the database with the initial exercises if they don´t exist.

@@ -30,12 +30,12 @@
                 <p class="date-text">Date: {{ workout.date_posted.strftime("%Y-%m-%d") }}</p>
 
                 <div class="exercise-container">
-                    {% for exercise_name, sets in workout.grouped_sets.items() %}
+                    {% for entry in workout.entries %}
                         <div class="exercise-group-card">  
-                            <div class="exercise-name-header">{{ exercise_name }}</div>
+                            <div class="exercise-name-header">{{ entry.exercise_name }}</div>
                             
                             <div class="sets-list">
-                                {% for s in sets %}
+                                {% for s in entry.sets %}
                                     <div class="set-row">
                                         <span class="set-number">Set {{ loop.index }}:</span>
                                         <span class="set-data"><strong>{{ s.weight }}</strong>kg x <strong>{{ s.reps }}</strong> Reps</span>                                                   
