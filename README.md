@@ -1,74 +1,91 @@
 # 🏋️ Workout Tracker
 
-A professional Flask-based web application designed to log and track daily training sessions. Built as part of the "30 Days of Python" challenge, this project focuses on relational database integrity, clean environment architecture, and Pythonic data processing.
+A robust Flask-based web application designed to log and track complex training sessions. This project has evolved from a basic "30 Days of Python" challenge into a robust application featuring a normalized 3-tier database architecture and a modern dashboard UI.
 
 ## 📁 Project Structure
 
-The application follows standard Flask conventions to ensure portability and ease of maintenance:
+The application follows standard Flask conventions noe featuring a dedicated sidebar layout for a dashboard experience:
 
 ```text
 .
-├── app.py              # Main application logic, Database models, and Routes
+├── app.py              # Main application logic, 3-tier Models, and Routes
 ├── requirements.txt    # Project dependencies (Flask, SQLAlchemy, etc.)
 ├── .gitignore          # Shields environment and database binaries from VCS
-├── instance/           # Local SQLite storage (auto-generated on first run)
+├── instance/           # Local SQLite storage (v1.2 Schema)
+├── static/
+│   └── style.css       # External CSS (Dark Mode, Sidebar, & Component styles)
 └── templates/          # Jinja2 HTML templates
-    ├── index.html      # History view and deletion interface
-    └── add.html        # Multi-input workout entry form
+    ├── index.html      # Dashboard history view 
+    └── add.html        # Multi-tiered workout entry form
 ```
 
-## 🚀 Features
+## 🚀 Version 1.2.0 Features
 
-* **Relational Logging:** Track workouts with a parent-child relationship (1 Workout -> Many Exercise Sets).
-* **History Management:** View a reverse-chronological log of all training sessions.
-* **Atomic Deletions:** Integrated SQLAlchemy cascades ensure that deleting a workout automatically cleans up all associated exercise data.
-* **Portable Architecture:** Fully configured for immediate deployment with virtual environments and dependency tracking.
+* **3-Tier Relational Mapping:** Data is now logically separated into Workouts (Session), Exercise Entries (Movement), and Set Records (Performance).
+* **Sidebar Dashboard UI:** Transitioned from a legacy top-navigation bar to a modern, Gemini-inspired sidebar for better accessibility and a "web-app" feel.
+* **Smart History Nesting:** The history log now dynamically nests sets within exercise cards, which are nested within workout sessions.
+* **Atomic Deletions:** Refined SQLAlchemy cascades ensure that deleting a workout cleans up all child entries and grandchild sets automatically.
 
 ## 🛠️ Technical Challenges & Solutions
 
 During development, I encountered and solved several technical hurdles:
-1. **Database Architecture & Referential Integrity**
+1. **Database Normalization (The Move to 3-Tier)**
 
-   The core the app relies on a **One-to-Many** relationship between the ``Workout`` (parent) and the ``ExerciseSet`` (child).
-   * **The Challenge:** Managing the lifecycle of data. Simply deleting a ``Workout`` would typically leave "orphan" ``ExerciseSets`` in the database, leading to data corruption and storage bloat.
-   * **The Solution:** I implemented ``cascade="all, delete-orphan"`` within the ``db.relationship``. This ensures that when a user deletes a workout, all associated sets are handled correctly and automatically by the database engine.
-2. **Handling Parallel Form Data with ``zip()``**
+   * **The Challenge:** In v1.1.0, exercise names were repeated for every set, leading to data redundancy and making it difficult to analyze performance per movement.
+   * **The Solution:** I refactored the database schema. I introduced an intermediate ``ExerciseEntry`` table.
 
-   The "Add Workout" form submits multiple lists of data simultaneously (Exercise Names, Weights, Reps).
-   * **The Challenge:** Flask's ``request.form.getlist`` returns separate, disconnected lists. Mapping the specific exercise name to the specific weight and specific rep count across three lists is traditionally error-prone.
-   * **The Solution:** Utilized Python’s ``zip()`` function in the backend. This allowed me to iterate over the lists in parallel to reconstruct structured ``ExerciseSet`` objects before committing them to the database, ensuring data alignment.
-3. **Environment & Git Recovery**
-   * **The Challenge:** Moving the project from a generic learning directory (``30DaysOfPython``) to a dedicated development folder caused "ghost" ``.git`` directories and broken virtual environment paths.
-   * **The Solution:** I performed a full repository reset, correctly configured a ``.gitignore`` shield to exclude the ``instance/`` folder and ``venv/``, and generated a ``requirements.txt`` to ensure the project is professional and "clone-and-run" ready.
+      * ``Workout`` (1) ➔ ``ExerciseEntry`` (Many)
+      * ``ExerciseEntry`` (1) ➔ ``SetRecord`` (Many)
+        
+        This allows for much cleaner data queries and future "Personal Best" tracking features.
+
+2. **Multi-Level Data Reconstruction**
+
+   * **The Challenge:** The "Add Workout" form now submits deeply nested data (Exercise Name ➔ Multiple Weights ➔ Multiple Reps).
+
+   * **The Solution:** I implemented an indexed naming convention in HTML (``weight_{{ i }}``) and used Python's backend logic to "flush" parent IDs before committing children. This ensures that every set is tied to the correct exercise, and every exercise to the correct workout, without integrity errors.
+
+3. **Dashboard Layout Refactor**
+
+   * **The Challenge:** As the app grew, a top-navigation bar felt crowded and "legacy" (the "1995" look).
+
+   * **The Solution:** Implemented a CSS Flexbox-based Sidebar. By setting a fixed-width ``nav`` and a flexible ``main`` content area, the app now feels like a modern productivity dashboard.
+
 4. **Automated Schema Initialization**
    * **The Challenge:** Preventing "Database Not Found" errors for new users.
+   
    * **The Solution:** Wrapped ``db.create_all()`` within an ``app.app_context()`` block in the entry point. This automatically detects and generates the SQLite database file and tables upon the first launch, removing manual setup steps.
 
-## 📊 Data Schema
+## 📊 Data Schema (v1.2.0)
 
-The database relationship allows for seamless querying of a workout´s sets via ``workout.sets``.
+The new schema ensures that one movement (e.g., Bench Press) can contain multiple performance records (sets) within a single session.
 
 ```mermaid
 erDiagram
-    WORKOUT ||--o{ EXERCISESET : contains
+    WORKOUT ||--o{ EXERCISE_ENTRY : contains
+    EXERCISE_ENTRY ||--o{ SET_RECORD : includes
     WORKOUT {
         int id PK
         string title
         datetime date_posted
     }
-    EXERCISESET {
+    EXERCISE_ENTRY {
         int id PK
         string exercise_name
+        int workout_id FK
+    }
+    SET_RECORD {
+        int id PK
         int weight
         int reps
-        int workout_id FK
+        int entry_id FK
     }
 ```
 
 ## 🛤️ Future Roadmap
 
 * **N+1 Optimization:** Implementing ``joinedload`` to improve database performance by reducing the number of queries needed to display the history log.
-* **Dynamic UI:** Adding JavaScript to allow users to add/remove set rows dynamically, replacing the current static input limit.
+* **Dynamic Set Injection:** Using Vanilla JS to allow users to add/remove sets and exercises on the fly without page refreshes.
 * **Data Validation:** Integrating ``Flask-WTF`` for robust server-side sanitization and CSRF protection.
 
 ## 🔧 Setup Instructions
@@ -79,4 +96,5 @@ erDiagram
    * Windows: ``venv\Scripts\activate``
    * macOS/Linux: ``source venv/bin/activate``
 4. **Install dependencies:** ``pip install -r requirements.txt``
+5. **Initialize Database:** (Crucial: Delete any ``workout.db`` from v1.1.0 to allow the new schema to generate).
 5. **Run the app:** ``python app.py``

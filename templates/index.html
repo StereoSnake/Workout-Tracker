@@ -7,48 +7,50 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <nav id="navbar">
-        <ul>
-            <li><a href="/">VIEW LOG</a></li>
-            <li><a href="/add">ADD WORKOUT</a></li>
-        </ul>
-    </nav>
-    
-    <hr>
+    <div class="app-container">
+        <nav id="sidebar">
+            <div class="sidebar-header">WORKOUT TRACKER</div>
+            <ul>
+                <li><a href="/">VIEW LOG</a></li>
+                <li><a href="/add">ADD WORKOUT</a></li>
+            </ul>
+        </nav>
 
-    <div class="main-container">
-        <h1>My Training History</h1>
+        <main class="content-area">
+            <div class="main-container">
+                <h1>My Training History</h1>
 
-        {% for workout in workouts %}
-            <div class="workout-card">
-                <div class="workout-header">
-                    <h2>{{ workout.title }}</h2>
-                    <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST">
-                        <button type="submit" class="btn-delete" onclick="return confirm('Delete this workout permanently?')">Delete Workout</button>    
-                    </form>   
-                </div>
-                <p class="date-text">Date: {{ workout.date_posted.strftime("%Y-%m-%d") }}</p>
-
-                <div class="exercise-container">
-                    {% for entry in workout.entries %}
-                        <div class="exercise-group-card">  
-                            <div class="exercise-name-header">{{ entry.exercise_name }}</div>
-                            
-                            <div class="sets-list">
-                                {% for s in entry.sets %}
-                                    <div class="set-row">
-                                        <span class="set-number">Set {{ loop.index }}:</span>
-                                        <span class="set-data"><strong>{{ s.weight }}</strong>kg x <strong>{{ s.reps }}</strong> Reps</span>                                                   
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            
+                {% for workout in workouts %}
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <h2>{{ workout.title }}</h2>
+                            <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST">
+                                <button type="submit" class="btn-delete" onclick="return confirm('Delete this workout permanently?')">Delete Workout</button>    
+                            </form>   
                         </div>
-                    {% endfor %}
-                </div>
+                        <p class="date-text">Date: {{ workout.date_posted.strftime("%Y-%m-%d") }}</p>
+
+                        <div class="exercise-container">
+                            {% for entry in workout.entries %}
+                                <div class="exercise-group-card">  
+                                    <div class="exercise-name-header">{{ entry.exercise_name }}</div>
+                                    
+                                    <div class="sets-list">
+                                        {% for s in entry.sets %}
+                                            <div class="set-row">
+                                                <span class="set-number">Set {{ loop.index }}:</span>
+                                                <span class="set-data"><strong>{{ s.weight }}</strong>kg x <strong>{{ s.reps }}</strong> Reps</span>                                                   
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
-            <hr>
-        {% endfor %}
+        </main>
     </div>
 </body>
 </html>
