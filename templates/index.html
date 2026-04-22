@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Workout Log</title>
+    <title>Workout Tracker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -11,44 +11,92 @@
         <nav id="sidebar">
             <div class="sidebar-header">WORKOUT TRACKER</div>
             <ul>
-                <li><a href="/">VIEW LOG</a></li>
-                <li><a href="/add">ADD WORKOUT</a></li>
+                <li><a href="/">View Log</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="/add">Add New Workout</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% endif %}
             </ul>
         </nav>
 
         <main class="content-area">
             <div class="main-container">
-                <h1>My Training History</h1>
 
-                {% for workout in workouts %}
-                    <div class="workout-card">
-                        <div class="workout-header">
-                            <h2>{{ workout.title }}</h2>
-                            <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST">
-                                <button type="submit" class="btn-delete" onclick="return confirm('Delete this workout permanently?')">Delete Workout</button>    
-                            </form>   
-                        </div>
-                        <p class="date-text">Date: {{ workout.date_posted.strftime("%Y-%m-%d") }}</p>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-alert flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% if current_user.is_authenticated %}
+                    <h1>Training History</h1>
 
-                        <div class="exercise-container">
-                            {% for entry in workout.entries %}
-                                <div class="exercise-group-card">  
-                                    <div class="exercise-name-header">{{ entry.exercise_name }}</div>
-                                    
-                                    <div class="sets-list">
-                                        {% for s in entry.sets %}
-                                            <div class="set-row">
-                                                <span class="set-number">Set {{ loop.index }}:</span>
-                                                <span class="set-data"><strong>{{ s.weight }}</strong>kg x <strong>{{ s.reps }}</strong> Reps</span>                                                   
-                                            </div>
-                                        {% endfor %}
+                    {% for workout in workouts %}
+                        <div class="workout-card">
+                            <div class="workout-header">
+                                <h2>{{ workout.title }}</h2>
+                                <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Delete this workout permanently?')">Delete Workout</button>    
+                                </form>   
+                            </div>
+                            <p class="card-subtitle">Date: {{ workout.date_posted.strftime("%a, %b %d, %Y") }}</p>
+
+                            <div class="exercise-container">
+                                {% for entry in workout.entries %}
+                                    <div class="exercise-group-card">  
+                                        <div class="exercise-name-header">{{ entry.exercise_name }}</div>
+                                        
+                                        <div class="sets-list">
+                                            {% for s in entry.sets %}
+                                                <div class="set-row">
+                                                    <span class="set-number">Set {{ loop.index }}</span>
+                                                    <span class="set-data"><strong>{{ s.weight }}</strong>kg x <strong>{{ s.reps }}</strong> Reps</span>                                                   
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        
                                     </div>
-                                    
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
+                    {% endfor %}
+                
+                {% else %}
+                    <div class="login-card">
+                        <div class="login-header">
+                            <h2>Login to Workout Tracker</h2>
+                        </div>
+                        <p class="form-instruction">Please enter Username and Password</p>
+
+                        <form action="/login" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="form-group">
+                                <label class="username-label">Username</label>
+                                <input type="text" name="username" required placeholder="Enter Username">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="password-label">Password</label>
+                                <input type="password" name="password" required placeholder="Enter Password">
+                            </div>
+
+                            <button type="submit" class="btn-save">Login</button>
+                        </form>
+
+                        <div class="form-footer">
+                            <span>Don't have an account yet?</span>
+                            <a href="/register">Register here</a>
+                        </div>
+                        
                     </div>
-                {% endfor %}
+                {% endif %}
+                
             </div>
         </main>
     </div>

@@ -1,73 +1,76 @@
-# 🏋️ Workout Tracker
+# 🏋️ Workout Tracker (v.1.3.0)
 
-A robust Flask-based web application designed to log and track complex training sessions. This project has evolved from a basic "30 Days of Python" challenge into a robust application featuring a normalized 3-tier database architecture and a modern dashboard UI.
+A secured, full-stack Flask application designed for high-precision training logs. Evolving from a "30 Days of Python" challenge, this project now features a 4-tier relational database, secure user authentication, and a modern dashboard UI.
 
 ## 📁 Project Structure
 
-The application follows standard Flask conventions noe featuring a dedicated sidebar layout for a dashboard experience:
+The application follows standard Flask conventions, now featuring environment security and a dashboard-centric layout:
 
 ```text
 .
-├── app.py              # Main application logic, 3-tier Models, and Routes
-├── requirements.txt    # Project dependencies (Flask, SQLAlchemy, etc.)
-├── .gitignore          # Shields environment and database binaries from VCS
-├── instance/           # Local SQLite storage (v1.2 Schema)
+├── app.py              # Main application logic, 4-tier Models, and Routes
+├── .env                # (Local only) Secured Environment Variables (Secret Keys)
+├── .gitignore          # Shields .env, venv, and database binaries from VCS
+├── requirements.txt    # Project dependencies (Flask, SQLAlchemy, Dotenv, etc.)
+├── instance/           # Local SQLite storage
 ├── static/
-│   └── style.css       # External CSS (Dark Mode, Sidebar, & Component styles)
+│   └── style.css       # External CSS (Dark Mode, Sidebar, & Card-based UI)
 └── templates/          # Jinja2 HTML templates
-    ├── index.html      # Dashboard history view 
-    └── add.html        # Multi-tiered workout entry form
+    ├── index.html      # Dashboard history view & Login gateway
+    ├── add.html        # Multi-tiered workout entry form
+    └── register.html   # User registration
 ```
 
-## 🚀 Version 1.2.0 Features
+## 🚀 Version 1.3.0 New Features
 
-* **3-Tier Relational Mapping:** Data is now logically separated into Workouts (Session), Exercise Entries (Movement), and Set Records (Performance).
-* **Sidebar Dashboard UI:** Transitioned from a legacy top-navigation bar to a modern, Gemini-inspired sidebar for better accessibility and a "web-app" feel.
-* **Smart History Nesting:** The history log now dynamically nests sets within exercise cards, which are nested within workout sessions.
-* **Atomic Deletions:** Refined SQLAlchemy cascades ensure that deleting a workout cleans up all child entries and grandchild sets automatically.
+* **Secure User Authentication:** Implemented ``Flask-Login`` for session management and password hashing, allowing multiple users to track their progress privately.
+* **Environment Security:** Transitioned to ``python-dotenv`` architecture. Sensitive data like ``SECRET_KEY`` and ``DATABASE_URL`` are now managed via environment variables, keeping credentials off GitHub.
+* **4-Tier Relational Mapping:** Added a ``User`` model to the hierarchy. Data is now logically mapped: ``User`` ➔ ``Workout`` ➔ ``Exercise`` ➔ ``Set``.
+* **CSRF Protection:** Integrated ``Flask-WTF`` to protect all form submissions (Add Workout, Delete, Login) against Cross-Site Request Forgery.
+* **Refined Card UI:** New "Exercise Group Cards" provide a clear visual distinction between movements and sets, optimized for both desktop and mobile viewing.
 
 ## 🛠️ Technical Challenges & Solutions
 
 During development, I encountered and solved several technical hurdles:
-1. **Database Normalization (The Move to 3-Tier)**
+1. **The Security "Shift-Left"**
 
-   * **The Challenge:** In v1.1.0, exercise names were repeated for every set, leading to data redundancy and making it difficult to analyze performance per movement.
-   * **The Solution:** I refactored the database schema. I introduced an intermediate ``ExerciseEntry`` table.
+   * **The Challenge:** Storing a hardcoded ``SECRET_KEY`` in ``app.py`` is a security risk when pushing to public repositories.
+   * **The Solution:** Implemented ``.env`` file support. I refactored the app to load configurations using ``os.environ.get()``, with a safe fallback for local development, ensuring no secrets are leaked to the Git history.
 
-      * ``Workout`` (1) ➔ ``ExerciseEntry`` (Many)
-      * ``ExerciseEntry`` (1) ➔ ``SetRecord`` (Many)
-        
-        This allows for much cleaner data queries and future "Personal Best" tracking features.
+2. **Relational User-Data Mapping**
 
-2. **Multi-Level Data Reconstruction**
+   * **The Challenge:** Ensuring users can only see and delete their own workout history.
 
-   * **The Challenge:** The "Add Workout" form now submits deeply nested data (Exercise Name ➔ Multiple Weights ➔ Multiple Reps).
+   * **The Solution:** Established a One-to-Many relationship between ``User`` and ``Workout``. Refactored backend routes to query ``current_user.workouts``, creating a secure data sandbox for every account.
 
-   * **The Solution:** I implemented an indexed naming convention in HTML (``weight_{{ i }}``) and used Python's backend logic to "flush" parent IDs before committing children. This ensures that every set is tied to the correct exercise, and every exercise to the correct workout, without integrity errors.
+3. **Floating-Point Precision**
 
-3. **Dashboard Layout Refactor**
+   * **The Challenge:** Legacy ``int`` fields prevented users from logging precise weights (e.g., 22.5kg).
 
-   * **The Challenge:** As the app grew, a top-navigation bar felt crowded and "legacy" (the "1995" look).
+   * **The Solution:** Migrated the ``weight`` column in the ``SetRecord`` table to ``Float`` and updated HTML inputs with ``step="0.1"``, allowing for professional-grade tracking.
 
-   * **The Solution:** Implemented a CSS Flexbox-based Sidebar. By setting a fixed-width ``nav`` and a flexible ``main`` content area, the app now feels like a modern productivity dashboard.
-
-4. **Automated Schema Initialization**
-   * **The Challenge:** Preventing "Database Not Found" errors for new users.
+4. **Advanced CSS Component Logic**
+   * **The Challenge:** Distinguishing between "Viewing" mode and "Input" mode in a dark-themed UI.
    
-   * **The Solution:** Wrapped ``db.create_all()`` within an ``app.app_context()`` block in the entry point. This automatically detects and generates the SQLite database file and tables upon the first launch, removing manual setup steps.
+   * **The Solution:** Created modular CSS "Chapters." I separated ``exercise-display-group`` (compact history view) from ``exercise-input-card`` (interactive form view), enhancing the overall UX.
 
-## 📊 Data Schema (v1.2.0)
-
-The new schema ensures that one movement (e.g., Bench Press) can contain multiple performance records (sets) within a single session.
+## 📊 Data Schema (v1.3.0)
 
 ```mermaid
 erDiagram
+    USER ||--o{ WORKOUT : owns
     WORKOUT ||--o{ EXERCISE_ENTRY : contains
     EXERCISE_ENTRY ||--o{ SET_RECORD : includes
+    USER {
+        int id PK
+        string username
+        string password_hash
+    }
     WORKOUT {
         int id PK
         string title
         datetime date_posted
+        int user_id FK
     }
     EXERCISE_ENTRY {
         int id PK
@@ -76,7 +79,7 @@ erDiagram
     }
     SET_RECORD {
         int id PK
-        int weight
+        float weight
         int reps
         int entry_id FK
     }
@@ -86,7 +89,6 @@ erDiagram
 
 * **N+1 Optimization:** Implementing ``joinedload`` to improve database performance by reducing the number of queries needed to display the history log.
 * **Dynamic Set Injection:** Using Vanilla JS to allow users to add/remove sets and exercises on the fly without page refreshes.
-* **Data Validation:** Integrating ``Flask-WTF`` for robust server-side sanitization and CSRF protection.
 
 ## 🔧 Setup Instructions
 
@@ -96,5 +98,8 @@ erDiagram
    * Windows: ``venv\Scripts\activate``
    * macOS/Linux: ``source venv/bin/activate``
 4. **Install dependencies:** ``pip install -r requirements.txt``
-5. **Initialize Database:** (Crucial: Delete any ``workout.db`` from v1.1.0 to allow the new schema to generate).
-5. **Run the app:** ``python app.py``
+5. **Configure Environment:**
+    * Create a ``.env`` file in the root directory.
+    * Add: ``SECRET_KEY=your_random_string``
+6. **Initialize Database:** (Crucial: Delete any ``workout.db`` from v1.2.0 to allow the new schema to generate).
+7. **Run the app:** ``python app.py``

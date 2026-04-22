@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 /*  ============================================================================================
     1. GLOBAL FOUNDATION
     Setting the theme, colors, and fonts for the entire app.
@@ -6,10 +8,23 @@
 body {
     background-color: #1e1f20;
     color: #e3e3e3;
-    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', 'Roboto', Helvetica, Arial, sans-serif;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    letter-spacing: -0.011em;
     margin: 0;
     padding: 0;
     line-height: 1.6;
+}
+
+h1 {
+    color: #e3e3e3;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 24px;
 }
 
 hr {
@@ -40,7 +55,7 @@ a:hover {
 
 #sidebar {
     width: 300px;
-    background-color: #444746;
+    background-color: #1e1f20;
     display: flex;
     flex-direction: column;
     padding: 30px 20px;
@@ -48,15 +63,17 @@ a:hover {
     top: 0;
     height: 100vh;
     box-sizing: border-box;
+    border-right: 1px solid #3c4043;
 }
 
 .sidebar-header {
     color: #ffffff;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 0.9rem;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.5px;
     margin-bottom: 40px;
     padding-left: 15px;
+    text-transform: uppercase;
 }
 
 #sidebar ul {
@@ -72,7 +89,7 @@ a:hover {
 #sidebar a {
     display: block;
     padding: 12px 15px;
-    border-radius: 8px;
+    border-radius: 32px;
     color: #9aa0a6;
     font-weight: 500;
     font-size: 0.9rem;
@@ -87,7 +104,7 @@ a:hover {
 /* Main scrollable area */
 .content-area {
     flex: 1;
-    background-color: #1e1f20;
+    background-color: #131313;
     overflow-y: auto;
 }
 
@@ -98,169 +115,286 @@ a:hover {
 }
 
 /*  ============================================================================================
-    3. WORKOUT CARDS & EXERCISE GROUPS
+    3. FLASH MESSAGES
+    ============================================================================================*/
+
+.flash-alert {
+    padding: 14px 20px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.flash-success {
+    background: rgba(129, 201, 149, 0.1);
+    color: #81c995;
+    border: 1px solid #81c995;
+}
+
+.flash-danger {
+    background: rgba(242, 139, 130, 0.1);
+    color: #f28b82;
+    border: 1px solid #f28b82;
+}
+
+/*  ============================================================================================
+    4. TRAINING HISTORY
     ============================================================================================*/
 
 .workout-card {
     background-color: #2b2c2f;
     border: 1px solid #444746;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 24px;
-    margin-bottom: 30px;
-    transition: border-color 0.3s ease;
-}
-
-.workout-card:hover {
-    border-color: #5f6368;
+    margin-bottom: 24px;
 }
 
 .workout-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .workout-header h2 {
     margin: 0;
     color: #ffffff;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 
-.date-text {
+.card-subtitle {
     color: #9aa0a6;
     font-size: 0.85rem;
-    margin-top: 5px;
+    margin-top: 4px 0 20px 0;
 }
 
 .exercise-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
+    gap: 16px;
+    margin-top: 10px;
 }
 
 .exercise-group-card {
     background-color: #1e1f20;
     border: 1px solid #3c4043;
-    border-radius: 8px;
+    border-radius: 12px;
+    margin-bottom: 12px;
     overflow: hidden;
 }
 
 .exercise-name-header {
     background-color: rgba(138, 180, 248, 0.08);
     color: #8ab4f8;
-    padding: 10px 15px;
-    font-weight: 600;
-    font-size: 0.8rem;
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 0.75rem;
     text-transform: uppercase;
+    letter-spacing: 0.08rem;
     border-bottom: 1px solid #3c4043;
 }
 
 .sets-list {
-    padding: 12px 15px;
+    padding: 12px 16px;
 }
 
 .set-row {
     display: flex;
     justify-content: space-between;
-    padding: 6px 0;
-    font-size: 0.95rem;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.set-row:not(:last-child) {
-    border-bottom: 1px dotted #3c4043;
-}
+.set-row:last-child { border-bottom: none; }
 
 .set-number {
     color: #9aa0a6;
+    font-size: 0.85rem;
 }
 
 .set-data {
+    color: #e3e3e3;
+    font-size: 0.9rem;
+}
+
+.set-data strong { color: #ffffff; }
+
+/*  ============================================================================================
+    5. LOGIN/REGISTER CARD
+    ============================================================================================*/
+
+.login-card {
+    max-width: 420px;
+    margin: 80px auto;
+    background-color: #2b2c2f;
+    border: 1px solid #444746;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.form-instruction {
+    text-align: center;
+    color: #9aa0a6;
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+}
+
+.form-group { margin-bottom: 24px; }
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: #9aa0a6;
+    margin: 8px 8px;
+    font-weight: 500;
+}
+
+.form-footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.9rem;
     color: #9aa0a6;
 }
 
 /*  ============================================================================================
-    4. FORMS & INPUTS (Optimized for the "Add" page)
+    6. FORMS & INPUTS (Optimized for the "Add" page)
     ============================================================================================*/
 
-.set-input-group {
-    padding: 10px 0;
-}
-
-.set-label {
-    display: block;
-    font-size: 0.75rem;
-    color: #9aa0a6;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-}
-
-.set-input-row {
-    display: flex;
-    gap: 10px;
-}
-
-.set-input-row input {
-    flex: 1;
-}
-
-.set-separator {
-    height: 1px;
-    background-color: #3c4043;
-    margin: 5px 0;
-}
-
+/* Standard Text, Number, and Password Fields */
 input[type="text"],
 input[type="number"],
+input[type="password"],
 select {
     background-color: #1e1f20;
     color: #e3e3e3;
     border: 1px solid #5f6368;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 0.9rem;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 1rem;
     outline: none;
     width: 100%;
     box-sizing: border-box;
     transition: border-color 0.2s;
 }
 
-input:focus, select:focus {
+/* Hover & Focus States */
+
+input:hover {
     border-color: #8ab4f8;
 }
 
+input:focus, select:focus {
+    border-color: #8ab4f8;
+    background-color: #2b2c2f;
+    box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.1);
+}
+
+/* Special styling for the Exercise Name within the card header */
+.exercise-name-header input {
+    background-color: transparent !important;
+    border: none !important;
+    color: #8ab4f8 !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0 !important;
+}
+
+/* Set Input Layout Logic */
+.set-input-group {
+    padding: 8px 0;
+}
+
+.set-label {
+    display: block;
+    font-size: 0.7rem;
+    color: #9aa0a6;
+    margin-bottom: 6px;
+    margin-left: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.set-input-row {
+    display: flex;
+    gap: 12px;
+}
+
+.set-input-row input {
+    flex: 1; /* Ensures Weight and Reps share equal space */
+}
+
+/* Chrome/Safari: Remove arrows from number inputs for a cleaner "App" look */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox: Remove arrows */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Placeholder Styling */
+::placeholder {
+    color: #5f6368;
+    opacity: 1;
+}
+
+
 /*  ============================================================================================
-    5. BUTTONS
+    7. BUTTONS
     ============================================================================================*/
 
+/* Primary Action (Save / Login) */
 .btn-save {
     background-color: #8ab4f8;
     color: #1e1f20;
     border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-weight: bold;
+    padding: 16px;
+    border-radius: 40px;
+    font-weight: 700;
     cursor: pointer;
     font-size: 1rem;
+    width: 100%;
     margin-top: 20px;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
+    font-family: inherit;
 }
 
-.btn.save:hover {
+.btn-save:hover {
     background-color: #aecbfa;
 }
 
+.btn-save:active {
+    transform: scale(0.98);
+}
+
+/* Danger Action (Delete) */
 .btn-delete {
-    background: none;
+    background: transparent;
     border: 1px solid #f28b82;
     color: #f28b82;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 20px;
     font-size: 0.75rem;
-    transition: 0.2s;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .btn-delete:hover {
-    background-color: rgba(242, 139, 130, 0.1);
+    background-color: rgba(242, 139, 130, 0.1);   
 }
