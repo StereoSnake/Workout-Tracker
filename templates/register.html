@@ -3,69 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Workout Tracker</title>
+    <title>IronSheet - Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="app-container">
-        <nav id="sidebar">
-            <div class="sidebar-header">WORKOUT TRACKER</div>
-            <ul>
-                <li><a href="/">Back to Login</a></li>
+    <div id="page-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside id="aside-nav">
+            <div class="aside-nav-header">
+                <div class="icon-frame">
+                    <img src="{{ url_for('static', filename='icons/icon-placeholder.svg') }}" class="brand-icon" alt="IronSheet Logo">
+                </div>
+                <span class="brand-name">IronSheet</span>
+            </div>
+
+            <ul class="nav-list">
+                <li class="nav-list-item">
+                    <a href="/">
+                        <img src="{{ url_for('static', filename='icons/login.svg') }}" class="nav-icon" alt="Login">
+                        <span class="label">Login</span>
+                    </a>
+                </li>
+                <li class="nav-list-item active">
+                    <a href="/register">
+                        <img src="{{ url_for('static', filename='icons/register.svg') }}" class="nav-icon" alt="Register">
+                        <span class="label">Register</span>
+                    </a>
+                </li>
             </ul>
-        </nav>
+        </aside>
 
-        <main class="content-area">
-            <div class="main-container">
-
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="flash-alert flash-{{ category }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-
-                <div class="login-card">
-                    <div class="login-header">
-                        <h2>Create Your Account</h2>
-                    </div>
-                    <p class="form-instruction">Join the Workout Tracker to start your fitness journey</p>
-
-                    <form action="/register" method="POST">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                        <div class="form-group">
-                            <label class="username-label">Choose Username</label>
-                            <input type="text" name="username" required placeholder="e.g. IronLifter24">
+        <main id="main-layout">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-alert flash-{{ category }}">
+                            {{ message }}
                         </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-                        <div class="form-group">
-                            <label class="password-label">Choose Password</label>
-                            <input type="password" name="password" required placeholder="Minimum 8 characters">
-                        </div>
-
-                        <button type="submit" class="btn-save">Create Account</button>
-                    </form>
-
-                    <div class="form-footer">
-                        <span>Already have an account?</span>
-                        <a href="/">Login here</a>
-                    </div>
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2 class="auth-title">Create Your Account</h2>
+                    <p class="auth-subtitle">Join <span class="brand-text">IronSheet</span> to start your fitness journey</p>
                 </div>
 
+                <form action="/register" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="input-group-username">
+                        <label class="field-label">Choose Username</label>
+                        <input type="text" class="input-field-base" name="username" required placeholder="e.g. IronLifter24">
+                    </div>
+
+                    <div class="input-group-password">
+                        <label class="field-label">Choose Password</label>
+                        <input type="password" class="input-field-base" name="password" required placeholder="Minimum 8 characters">
+                    </div>
+
+                    <button type="submit" class="btn-register">
+                        <span class="btn-label">Create Account</span>
+                    </button>
+                </form>
+
+                <div class="auth-footer-text">
+                    <span>Already have an account?</span>
+                    <a href="/">Login here</a>
+                </div>
             </div>
         </main>
-
-
-    </div>
-
-
-
-
-
-    
+    </div>    
 </body>
 </html>

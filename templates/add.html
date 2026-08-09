@@ -3,78 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Workout - Workout Tracker</title>
+    <title>IronSheet - Add Workout</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="app-container">
-        <nav id="sidebar">
-            <div class="sidebar-header">WORKOUT TRACKER</div>
-            <ul>
-                <li><a href="/">View Log</a></li>
-                <li><a href="/add">Add New Workout</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+    <div id="page-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside id="aside-nav">
+            <div class="aside-nav-header">
+                <div class="icon-frame">
+                    <img src="{{ url_for('static', filename='icons/icon-placeholder.svg') }}" class="brand-icon" alt="IronSheet Logo">
+                </div>
+                <span class="brand-name">IronSheet</span>
+            </div>
+
+            <ul class="nav-list">
+                <li class="nav-list-item">
+                    <a href="/">
+                        <img src="{{ url_for('static', filename='icons/training-history.svg') }}" class="nav-icon" alt="Training History">
+                        <span class="label">Training History</span>
+                    </a>
+                </li>
+                <li class="nav-list-item active">
+                    <a href="/add">
+                        <img src="{{ url_for('static', filename='icons/add-workout.svg') }}" class="nav-icon" alt="Add Workout">
+                        <span class="label">Add Workout</span>
+                    </a>
+                </li>
+                <li class="nav-list-item">
+                    <a href="{{ url_for('logout') }}">
+                        <img src="{{ url_for('static', filename='icons/logout.svg') }}" class="nav-icon" alt="Logout">
+                        <span class="label">Logout</span>
+                    </a>
+                </li>
             </ul>
-        </nav>
+        </aside>
 
-        <main class="content-area">
-            <div class="main-container">
-                <h1>Add New Workout</h1>
-                <form action="/add" id="workout-form" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
-                    <div class="workout-card">
-                        <div class="form-group">
-                            <label>Workout Title:</label>
-                            <input type="text" name="title" placeholder="e.g. Chest Day">
+        <main id="main-layout">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-alert flash-{{ category }}">
+                            {{ message }}
                         </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Main Page Header -->
+            <div class="page-header">
+                <h1 class="page-header-label">Add New Workout</h1>
+            </div>
+
+            <div class="add-workout-card">
+                <form action="/add" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <!-- add-workout-header -->
+                    <div class="add-workout-header">
+                        <label for="title" class="add-workout-label">Workout Title:</label>
+                        <!-- input-field-workout-title -->
+                        <input 
+                            type="text" 
+                            id="title" 
+                            name="title" 
+                            class="input-field-workout-title" 
+                            placeholder="eg. Chest Day" 
+                            required 
+                            autocomplete="off"
+                        >
                     </div>
 
-                    <div class="exercise-container">
-                        {% for i in range(1, 6) %}
-                            <div class="exercise-group-card">
-                                <div class="form-group">
-                                    <label class="form-label">Exercise {{ i }}</label>
-                                    <select name="ex_name_{{ i }}">
-                                        <option value="">-- Select Exercise {{ i }} --</option>
-                                        {% for group, names in exercises.items() %}
-                                            <optgroup label="{{ group }}">
-                                                {% for name in names %}
-                                                    <option value="{{ name }}">{{ name }}</option>
-                                                {% endfor %}
-                                            </optgroup>
-                                        {% endfor %}
-                                    </select>
-                                </div>
+                    <!-- exercise-input-card (Repeated for Exercises 1 to 5) -->
+                    {% for i in range(1, 6) %}
+                    <div class="exercise-input-card">
+
+                        <!-- exercise-card-header -->
+                        <div class="exercise-card-header">
+                            <span class="exercise-number">Exercise {{ i }}</span>
+                        </div>
+
+                        <!-- exercise-select-field -->
+                        <select name="ex_name_{{ i }}" class="exercise-select-field">
+                            <option value="">-- Select Exercise {{ i }} --</option>
+                            {% for group, names in exercises.items() %}
+                                <optgroup label="{{ group }}">
+                                    {% for name in names %}
+                                        <option value="{{ name }}">{{ name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+
+                        <!-- input-sets-list -->
+                        <div class="input-sets-list">
+                            {% for set_num in [1, 2] %}
+                            <!-- input-set-row -->
+                            <div class="input-set-row">
                                 
-                                <div class="sets-list">
-                                    <div class="set-input-group">
-                                        <span class="set-label">Set 1</span>
-                                        <div class="set-input-row">
-                                            <input type="number" name="weight_{{ i }}" class="workout-input" placeholder="kg" step="0.25">
-                                            <input type="number" name="reps_{{ i }}" class="workout-input" placeholder="Reps">
-                                        </div>
-                                    </div>
+                                <!-- input-set-number -->
+                                <span class="input-set-number">Set {{ set_num }}:</span>
 
-                                    <div class="set-separator"></div>
-
-                                    <div class="set-input-group">
-                                        <span class="set-label">Set 2</span>
-                                        <div class="set-input-row">
-                                            <input type="number" name="weight_{{ i }}" class="workout-input" placeholder="kg" step="0.25">
-                                            <input type="number" name="reps_{{ i }}" class="workout-input" placeholder="Reps">
-                                        </div>
-                                    </div>
+                                <!-- input-weight-wrapper -->
+                                <div class="input-weight-wrapper">
+                                    <input 
+                                        type="number" 
+                                        step="0.5" 
+                                        min="0" 
+                                        name="weight_{{ i }}" 
+                                        class="input-weight" 
+                                        placeholder="Weight (kg)"
+                                    >
                                 </div>
-                            </div>
-                        {% endfor %}
-                    </div>
 
-                    <button type="submit" class="btn-save" style="width: 100%;">Save Workout</button>
+                                <!-- input-reps-wrapper -->
+                                <div class="input-reps-wrapper">
+                                    <input 
+                                        type="number" 
+                                        min="0" 
+                                        name="reps_{{ i }}" 
+                                        class="input-reps" 
+                                        placeholder="Reps"
+                                    >
+                                </div>
+
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+                    <!-- btn-save -->
+                    <button type="submit" class="btn-save">
+                        <span class="btn-save-label">Save Workout</span>
+                    </button>
+
                 </form>
             </div>
         </main>
-    </div>
-    
+    </div>      
 </body>
 </html>

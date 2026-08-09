@@ -1,6 +1,6 @@
-# 🏋️ Workout Tracker (v.1.3.0)
+# 🏋️ Workout Tracker (v.1.4.0)
 
-A secured, full-stack Flask application designed for high-precision training logs. Evolving from a "30 Days of Python" challenge, this project now features a 4-tier relational database, secure user authentication, and a modern dashboard UI.
+A secured, full-stack Flask application designed for high-precision training logs. Evolving from a "30 Days of Python" challenge, this project now features a 4-tier relational database, secure user authentication, and a modern dashboard UI. IronSheet has evolved into a complete, modern web application featuring a Figma-aligned dark UI, static asset integration, custom dropdown controls, and robust CSRF-protected backend mapping.
 
 ## 📁 Project Structure
 
@@ -8,82 +8,34 @@ The application follows standard Flask conventions, now featuring environment se
 
 ```text
 .
-├── app.py              # Main application logic, 4-tier Models, and Routes
-├── .env                # (Local only) Secured Environment Variables (Secret Keys)
-├── .gitignore          # Shields .env, venv, and database binaries from VCS
-├── requirements.txt    # Project dependencies (Flask, SQLAlchemy, Dotenv, etc.)
-├── instance/           # Local SQLite storage
+├── app.py               # Main application logic, 4-tier Models, and Routes
+├── .env                 # Secured Environment Variables (Secret Keys, DB URL)
+├── .gitignore           # Shields .env, venv, and database binaries from VCS
+├── requirements.txt     # Project dependencies (Flask, SQLAlchemy, WTForms, etc.)
+├── instance/            # Local SQLite storage
 ├── static/
-│   └── style.css       # External CSS (Dark Mode, Sidebar, & Card-based UI)
-└── templates/          # Jinja2 HTML templates
-    ├── index.html      # Dashboard history view & Login gateway
-    ├── add.html        # Multi-tiered workout entry form
-    └── register.html   # User registration
+│   ├── style.css        # Custom dark-theme CSS architecture & custom inputs
+│   └── icons/           # SVG asset library for navigation & action items
+└── templates/           # Jinja2 HTML views
+    ├── index.html       # History dashboard & login interface
+    ├── add.html         # Grouped exercise selection & set logging form
+    └── register.html    # User registration view
 ```
 
-## 🚀 Version 1.3.0 New Features
+## 🚀 Version 1.4.0 New Features & Design Overhaul
 
-* **Secure User Authentication:** Implemented ``Flask-Login`` for session management and password hashing, allowing multiple users to track their progress privately.
-* **Environment Security:** Transitioned to ``python-dotenv`` architecture. Sensitive data like ``SECRET_KEY`` and ``DATABASE_URL`` are now managed via environment variables, keeping credentials off GitHub.
-* **4-Tier Relational Mapping:** Added a ``User`` model to the hierarchy. Data is now logically mapped: ``User`` ➔ ``Workout`` ➔ ``Exercise`` ➔ ``Set``.
-* **CSRF Protection:** Integrated ``Flask-WTF`` to protect all form submissions (Add Workout, Delete, Login) against Cross-Site Request Forgery.
-* **Refined Card UI:** New "Exercise Group Cards" provide a clear visual distinction between movements and sets, optimized for both desktop and mobile viewing.
+* **Figma-Aligned UI Redesign:** Rebuilt all HTML views (``add.html``, ``index.html``) and overhauled ``style.css`` with a custom dark theme design system, elevated card layouts, and refined typography.
+* **SVG Asset Pipeline:** Integrated dedicated SVG icons (``static/icons/``) for navigation, workout actions, and responsive UI elements.
+
 
 ## 🛠️ Technical Challenges & Solutions
 
 During development, I encountered and solved several technical hurdles:
-1. **The Security "Shift-Left"**
+1. **Translating Figma Designs to a Responsive CSS Component Architecture**
 
-   * **The Challenge:** Storing a hardcoded ``SECRET_KEY`` in ``app.py`` is a security risk when pushing to public repositories.
-   * **The Solution:** Implemented ``.env`` file support. I refactored the app to load configurations using ``os.environ.get()``, with a safe fallback for local development, ensuring no secrets are leaked to the Git history.
+   * **The Challenge:** Transferring exact pixel dimensions, fixed card heights, and precise spacing from static Figma frames into standard HTML often leads to rigid layouts. Rigid pixel layouts break on smaller viewports, cause element overlap when long exercise names are selected, or misalign input fields across rows.
+   * **The Solution:** Implemented a fluid flexbox layout with custom CSS custom properties (variables) derived directly from the Figma color palette and grid. By replacing fixed pixel dimensions with dynamic sizing (``width: 100%``, flex containers, and relative ``rem/em`` spacing), components retain the clean visual hierarchy of the Figma file while remaining responsive across desktop and mobile screens.
 
-2. **Relational User-Data Mapping**
-
-   * **The Challenge:** Ensuring users can only see and delete their own workout history.
-
-   * **The Solution:** Established a One-to-Many relationship between ``User`` and ``Workout``. Refactored backend routes to query ``current_user.workouts``, creating a secure data sandbox for every account.
-
-3. **Floating-Point Precision**
-
-   * **The Challenge:** Legacy ``int`` fields prevented users from logging precise weights (e.g., 22.5kg).
-
-   * **The Solution:** Migrated the ``weight`` column in the ``SetRecord`` table to ``Float`` and updated HTML inputs with ``step="0.1"``, allowing for professional-grade tracking.
-
-4. **Advanced CSS Component Logic**
-   * **The Challenge:** Distinguishing between "Viewing" mode and "Input" mode in a dark-themed UI.
-   
-   * **The Solution:** Created modular CSS "Chapters." I separated ``exercise-display-group`` (compact history view) from ``exercise-input-card`` (interactive form view), enhancing the overall UX.
-
-## 📊 Data Schema (v1.3.0)
-
-```mermaid
-erDiagram
-    USER ||--o{ WORKOUT : owns
-    WORKOUT ||--o{ EXERCISE_ENTRY : contains
-    EXERCISE_ENTRY ||--o{ SET_RECORD : includes
-    USER {
-        int id PK
-        string username
-        string password_hash
-    }
-    WORKOUT {
-        int id PK
-        string title
-        datetime date_posted
-        int user_id FK
-    }
-    EXERCISE_ENTRY {
-        int id PK
-        string exercise_name
-        int workout_id FK
-    }
-    SET_RECORD {
-        int id PK
-        float weight
-        int reps
-        int entry_id FK
-    }
-```
 
 ## 🛤️ Future Roadmap
 

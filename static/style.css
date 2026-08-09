@@ -1,400 +1,977 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Iceland&family=Inter:wght@400;500;600;700&display=swap');
 
-/*  ============================================================================================
-    1. GLOBAL FOUNDATION
-    Setting the theme, colors, and fonts for the entire app.
-    ============================================================================================*/
+/* ============================================================================================
+   1. GLOBAL PRESETS & THEME VARIABLES
+   ============================================================================================ */
+
+:root {
+    /* Figma Color Styles */
+    --main-layout-bg: #131314;      /* Main Layout Background */
+    --card-bg: #2B2C2F;             /* Card Background */
+    --navbar-bg: #1E1F20;           /* Navbar Background */
+    
+    --primary-font: #FFFFFF;        /* Primary Font */
+    --subtitle-font: #9AA0A6;       /* Subtitle Font */
+    --field-label-font: #9AA0A6;    /* Field Label Font */
+    --placeholder-font: #5F6368;    /* Placeholder Font */
+    
+    --teal-accent: #3BBA9C;         /* Mint / Teal Accent */
+    --delete-accent: #F28B82;       /* Delete */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-    background-color: #1e1f20;
-    color: #e3e3e3;
-    font-family: 'Inter', 'Roboto', Helvetica, Arial, sans-serif;
-
+    background-color: var(--main-layout-bg);
+    color: var(--primary-font);
+    font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-
-    letter-spacing: -0.011em;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
 }
 
-h1 {
-    color: #e3e3e3;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-}
+/* ============================================================================================
+   2. PAGE WRAPPER & SIDEBAR LAYOUT
+   ============================================================================================ */
 
-hr {
-    display: none;
-}
-
-/*  Base link styles */
-a {
-    color: #8ab4f8;
-    text-decoration: none;
-    transition: 0.2s;
-}
-
-a:hover {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-/*  ============================================================================================
-    2. DASHBOARD LAYOUT
-    This uses Flexbox to place the sidebar on the left and content on the right.
-    ============================================================================================*/
-
-.app-container {
+#page-wrapper {
     display: flex;
     min-height: 100vh;
+    width: 100%;
 }
 
-#sidebar {
-    width: 300px;
-    background-color: #1e1f20;
+/* Aside Navigation */
+#aside-nav {
     display: flex;
     flex-direction: column;
-    padding: 30px 20px;
-    position: sticky;
+    align-items: flex-start;
+    width: 260px;
+    min-height: 100vh;
+    padding: 16px;
+    gap: 10px;
+    background: var(--navbar-bg);
+    position: fixed;
     top: 0;
-    height: 100vh;
-    box-sizing: border-box;
-    border-right: 1px solid #3c4043;
+    left: 0;
 }
 
-.sidebar-header {
-    color: #ffffff;
-    font-weight: 500;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    margin-bottom: 40px;
-    padding-left: 15px;
-    text-transform: uppercase;
+.aside-nav-header {
+    display: flex;
+    align-items: center;
+    width: 228px;
+    height: 56px;
+    padding: 8px 12px;
+    gap: 16px;
+    flex-shrink: 0;
 }
 
-#sidebar ul {
+.brand-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.brand-name {
+    color: var(--primary-font);
+    font-family: 'Iceland', cursive;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: normal;
+}
+
+/* Navigation List */
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 0;
     list-style: none;
-    padding: 0;
-    margin: 0;
 }
 
-#sidebar li {
-    margin-bottom: 8px;
+.nav-list-item {
+    width: 100%;
 }
 
-#sidebar a {
-    display: block;
-    padding: 12px 15px;
-    border-radius: 32px;
-    color: #9aa0a6;
-    font-weight: 500;
-    font-size: 0.9rem;
+/* Base Navigation Link */
+.nav-list-item a {
+    display: flex;
+    align-items: center;
+    width: 228px;
+    height: 40px;
+    padding: 8px;
+    gap: 16px;
+    text-decoration: none;
+    border-radius: 20px;
+    border: 1px solid transparent;
     transition: all 0.2s ease;
 }
 
-#sidebar a:hover {
-    background-color: rgba(138, 180, 248, 0.08);
-    color: #8ab4f8;
-}
-
-/* Main scrollable area */
-.content-area {
-    flex: 1;
-    background-color: #131313;
-    overflow-y: auto;
-}
-
-.main-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 0 40px;
-}
-
-/*  ============================================================================================
-    3. FLASH MESSAGES
-    ============================================================================================*/
-
-.flash-alert {
-    padding: 14px 20px;
-    margin-bottom: 30px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-align: center;
-}
-
-.flash-success {
-    background: rgba(129, 201, 149, 0.1);
-    color: #81c995;
-    border: 1px solid #81c995;
-}
-
-.flash-danger {
-    background: rgba(242, 139, 130, 0.1);
-    color: #f28b82;
-    border: 1px solid #f28b82;
-}
-
-/*  ============================================================================================
-    4. TRAINING HISTORY
-    ============================================================================================*/
-
-.workout-card {
-    background-color: #2b2c2f;
-    border: 1px solid #444746;
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-}
-
-.workout-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.workout-header h2 {
-    margin: 0;
-    color: #ffffff;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.card-subtitle {
-    color: #9aa0a6;
-    font-size: 0.85rem;
-    margin-top: 4px 0 20px 0;
-}
-
-.exercise-container {
+.nav-list-item .label {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 10px;
+    justify-content: center;
+    flex: 1 0 0;
+    height: 18px;
+    color: var(--primary-font);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    stroke-width: 2px;
+    stroke: var(--primary-font);
+    transition: stroke 0.2s ease;
+}
+
+/* Hover State */
+.nav-list-item a:hover {
+    border: 1px solid rgba(59, 186, 156, 0.25);
+    background: rgba(58, 58, 58, 0.75);
+}
+
+/* Active State */
+.nav-list-item.active a {
+    background: rgba(59, 186, 156, 0.25);
+    border-color: transparent;
+}
+
+.nav-list-item.active .label {
+    color: var(--teal-accent);
+}
+
+.nav-list-item.active .nav-icon {
+    stroke: var(--teal-accent);
+}
+
+/* Main Layout Wrapper (Offset for fixed sidebar) */
+#main-layout {
+    flex: 1;
+    margin-left: 260px;
+    padding: 40px 60px;
+    min-height: 100vh;
+    background-color: var(--main-layout-bg);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ============================================================================================
+   3. TRAINING HISTORY (index.html)
+   ============================================================================================ */
+
+/* Page Title Header */
+.page-header {
+    display: flex;
+    height: 64px;
+    padding: 16px;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+}
+
+.page-header-label {
+    color: var(--primary-font, #FFF);
+    font-family: Iceland;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+/* Workout Card Container */
+.workout-card {
+    display: flex;
+    width: 100%;
+    max-width: 480px;
+    padding: 8px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    margin-bottom: 16px;
+
+    border-radius: 16px;
+    border: 1px solid var(--teal-accent, #3BBA9C);
+    background: var(--card-bg, #2B2C2F);
+}
+
+.workout-card-header {
+    display: flex;
+    padding: 8px 0;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.workout-card-title {
+    color: var(--primary-font, #FFF);
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.workout-card-subtitle {
+    color: var(--subtitle-font, #9AA0A6);
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+/* Delete Button */
+.btn-delete {
+    display: flex;
+    padding: 4px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    border-radius: 16px;
+    border: 1px solid var(--delete-accent, #F28B82);
+    background: transparent;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-delete:hover {
+    background: rgba(242, 139, 130, 0.25);
+}
+
+.btn-delete-label {
+    display: flex;
+    width: auto;
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+
+    color: var(--delete-accent, #F28B82);
+    text-align: center;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+/* Exercises Group Inside Workout Card */
+.exercise-container {
+    display: flex;
+    width: 100%;
+    padding: 4px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
 }
 
 .exercise-group-card {
-    background-color: #1e1f20;
-    border: 1px solid #3c4043;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+
     border-radius: 12px;
-    margin-bottom: 12px;
-    overflow: hidden;
+    border: 1px solid var(--placeholder-font, #5F6368);
+    background: var(--navbar-bg, #1E1F20);
 }
 
 .exercise-name-header {
-    background-color: rgba(138, 180, 248, 0.08);
-    color: #8ab4f8;
-    padding: 12px 16px;
-    font-weight: 700;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08rem;
-    border-bottom: 1px solid #3c4043;
+    display: flex;
+    height: 28px;
+    padding: 0 8px;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
 }
 
+.exercise-name-label {
+    display: flex;
+    height: 18px;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1 0 0;
+
+    color: var(--teal-accent, #3BBA9C);
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+/* Set Items Grid / Row Layout */
 .sets-list {
-    padding: 12px 16px;
+    display: flex;
+    height: 28px;
+    padding: 0 8px;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
 }
 
 .set-row {
     display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 4px 0;
+    align-items: center;
+    gap: 10px;
 }
 
-.set-row:last-child { border-bottom: none; }
-
 .set-number {
-    color: #9aa0a6;
-    font-size: 0.85rem;
+    color: var(--field-label-font, #9AA0A6);
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
 }
 
 .set-data {
-    color: #e3e3e3;
-    font-size: 0.9rem;
-}
-
-.set-data strong { color: #ffffff; }
-
-/*  ============================================================================================
-    5. LOGIN/REGISTER CARD
-    ============================================================================================*/
-
-.login-card {
-    max-width: 420px;
-    margin: 80px auto;
-    background-color: #2b2c2f;
-    border: 1px solid #444746;
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
-
-.login-header {
-    text-align: center;
-    margin-bottom: 8px;
-    color: #ffffff;
-}
-
-.form-instruction {
-    text-align: center;
-    color: #9aa0a6;
-    font-size: 0.9rem;
-    margin-bottom: 32px;
-}
-
-.form-group { margin-bottom: 24px; }
-
-.form-group label {
-    display: block;
-    font-size: 0.8rem;
-    color: #9aa0a6;
-    margin: 8px 8px;
+    color: var(--primary-font);
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
     font-weight: 500;
+    line-height: normal;
 }
 
-.form-footer {
-    margin-top: 30px;
+.set-data strong {
+    color: var(--primary-font);
+    font-weight: 700;
+}
+
+/* ============================================================================================
+   4. AUTHENTICATION CARDS (index-login & register.html)
+   ============================================================================================ */
+
+/* Main Auth Card Container */
+.auth-card {
+    display: flex;
+    width: 372px;
+    padding: 32px;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    margin: auto;
+
+    border-radius: 16px;
+    border: 1px solid var(--teal-accent, #3BBA9C);
+    background: var(--card-bg, #2B2C2F);
+    box-shadow: 0 20px 40px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Auth Card Header */
+.auth-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    opacity: 0.8;
+}
+
+.auth-title {
+    color: var(--primary-font, #FFF);
     text-align: center;
-    font-size: 0.9rem;
-    color: #9aa0a6;
+    font-family: Iceland;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }
 
-/*  ============================================================================================
-    6. FORMS & INPUTS (Optimized for the "Add" page)
-    ============================================================================================*/
+.auth-subtitle {
+    color: var(--subtitle-font, #9AA0A6);
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
 
-/* Standard Text, Number, and Password Fields */
-input[type="text"],
-input[type="number"],
-input[type="password"],
-select {
-    background-color: #1e1f20;
-    color: #e3e3e3;
-    border: 1px solid #5f6368;
+.auth-subtitle .brand-text {
+    font-family: Iceland;
+    font-size: 24px;
+}
+
+/* Auth Form Element */
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-self: stretch;
+}
+
+/* Input Groups */
+.input-group-username,
+.input-group-password {
+    display: flex;
+    height: 65px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.field-label {
+    align-self: stretch;
+    color: var(--field-label-font, #9AA0A6);
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+/* Input Base Styling */
+.input-field-base {
+    display: flex;
+    height: 40px;
+    padding: 8px 16px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+    flex-shrink: 0;
+    align-self: stretch;
+
     border-radius: 12px;
-    padding: 14px;
-    font-size: 1rem;
+    border: 1px solid var(--teal-accent, #3BBA9C);
+    background: var(--navbar-bg, #1E1F20);
+
+    color: var(--primary-font, #FFF);
+    font-family: 'Inter';
+    font-size: 16px;
+    font-weight: 400;
     outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.input-field-base::placeholder {
+    color: var(--placeholder-font, #5F6368);
+}
+
+.input-field-base:hover {
+    border-color: rgba(59, 186, 156, 0.6);
+    background: rgba(30, 31, 32, 0.85);
+}
+
+.input-field-base:focus {
+    border-color: var(--teal-accent, #3BBA9C);
+    box-shadow: 0 0 8px rgba(59, 186, 156, 0.25);
+}
+
+/* Buttons (Login & Register) */
+.btn-login,
+.btn-register {
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    background: var(--teal-accent, #3BBA9C);
+
+    cursor: pointer;
+    transition: all 0.2s ease, background 0.2s ease;
+}
+
+.btn-login:hover,
+.btn-register:hover {
+    background: #42cbab;
+    box-shadow: 0 0 12px rgba(59, 186, 156, 0.35);
+}
+
+.btn-label {
+    color: var(--Main-Layout-Background, #131314);
+    text-align: center;
+    font-family: Iceland;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+/* Footer Link Area */
+.auth-footer-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    align-self: stretch;
+
+    color: var(--subtitle-font, #9AA0A6);
+    text-align: center;
+    font-family: Inter;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.auth-footer-text a {
+    color: var(--teal-accent, #3BBA9C);
+    text-decoration: none;
+}
+
+.auth-footer-text a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================================================
+   5. ADD WORKOUT PAGE (add.html)
+   ============================================================================================ */
+
+/* Main Form Card Container */
+.add-workout-card {
+    display: flex;
+    width: 600px;
+    padding: 8px 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 16px;
+    border: 1px solid var(--teal-accent, #3BBA9C);
+    background: var(--card-bg, #2B2C2F);
+    box-shadow: 0 20px 40px 0 rgba(0, 0, 0, 0.25);
+}
+
+.add-workout-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     width: 100%;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
 }
 
-/* Hover & Focus States */
-
-input:hover {
-    border-color: #8ab4f8;
+/* Workout Title Section */
+.workout-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
 }
 
-input:focus, select:focus {
-    border-color: #8ab4f8;
-    background-color: #2b2c2f;
-    box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.1);
+/* Dynamic Exercise Form Card */
+.exercise-form-card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+    width: 100%;
+
+    border-radius: 12px;
+    border: 1px solid var(--placeholder-font, #5F6368);
+    background: var(--navbar-bg, #1E1F20);
 }
 
-/* Special styling for the Exercise Name within the card header */
-.exercise-name-header input {
-    background-color: transparent !important;
-    border: none !important;
-    color: #8ab4f8 !important;
-    font-weight: 700 !important;
-    font-size: 0.8rem !important;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0 !important;
+.exercise-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
-/* Set Input Layout Logic */
-.set-input-group {
-    padding: 8px 0;
+.exercise-number-label {
+    color: var(--teal-accent, #3BBA9C);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
 }
 
-.set-label {
-    display: block;
-    font-size: 0.7rem;
-    color: #9aa0a6;
-    margin-bottom: 6px;
-    margin-left: 4px;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+/* Dropdown Select Styling */
+.select-field-base {
+    display: flex;
+    height: 40px;
+    padding: 8px 12px;
+    align-items: center;
+    width: 100%;
+
+    border-radius: 8px;
+    border: 1px solid var(--placeholder-font, #5F6368);
+    background: var(--main-layout-bg, #131314);
+
+    color: var(--primary-font, #FFF);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.select-field-base:hover {
+    border-color: rgba(59, 186, 156, 0.6);
+}
+
+.select-field-base:focus {
+    border-color: var(--teal-accent, #3BBA9C);
+    box-shadow: 0 0 8px rgba(59, 186, 156, 0.25);
+}
+
+/* Sets Input Row (Weight & Reps Side-by-Side) */
+.sets-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
 }
 
 .set-input-row {
     display: flex;
+    align-items: center;
     gap: 12px;
-}
-
-.set-input-row input {
-    flex: 1; /* Ensures Weight and Reps share equal space */
-}
-
-/* Chrome/Safari: Remove arrows from number inputs for a cleaner "App" look */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox: Remove arrows */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-/* Placeholder Styling */
-::placeholder {
-    color: #5f6368;
-    opacity: 1;
-}
-
-
-/*  ============================================================================================
-    7. BUTTONS
-    ============================================================================================*/
-
-/* Primary Action (Save / Login) */
-.btn-save {
-    background-color: #8ab4f8;
-    color: #1e1f20;
-    border: none;
-    padding: 16px;
-    border-radius: 40px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 1rem;
     width: 100%;
-    margin-top: 20px;
-    transition: background 0.2s, transform 0.1s;
-    font-family: inherit;
 }
 
-.btn-save:hover {
-    background-color: #aecbfa;
+.set-label {
+    color: var(--field-label-font, #9AA0A6);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 45px;
 }
 
-.btn-save:active {
-    transform: scale(0.98);
+.input-number-field {
+    display: flex;
+    height: 36px;
+    padding: 6px 10px;
+    flex: 1;
+
+    border-radius: 6px;
+    border: 1px solid var(--placeholder-font, #5F6368);
+    background: var(--main-layout-bg, #131314);
+
+    color: var(--primary-font, #FFF);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Danger Action (Delete) */
-.btn-delete {
-    background: transparent;
-    border: 1px solid #f28b82;
-    color: #f28b82;
-    padding: 6px 14px;
+.input-number-field::placeholder {
+    color: var(--placeholder-font, #5F6368);
+}
+
+.input-number-field:hover {
+    border-color: rgba(59, 186, 156, 0.6);
+}
+
+.input-number-field:focus {
+    border-color: var(--teal-accent, #3BBA9C);
+    box-shadow: 0 0 8px rgba(59, 186, 156, 0.25);
+}
+
+/* Submit Workout Button */
+.btn-submit-workout {
+    display: flex;
+    height: 44px;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
     border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
+    border: none;
+    outline: none;
+    background: var(--teal-accent, #3BBA9C);
+
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.btn-delete:hover {
-    background-color: rgba(242, 139, 130, 0.1);   
+.btn-submit-workout:hover {
+    background: #42cbab;
+    box-shadow: 0 0 12px rgba(59, 186, 156, 0.35);
+}
+
+.btn-submit-workout .btn-label {
+    color: var(--navbar-bg, #1E1F20);
+    text-align: center;
+    font-family: 'Iceland', cursive;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+/* ============================================================================================
+   ADD WORKOUT PAGE (add.html)
+   ============================================================================================ */
+
+/* Main Form Container */
+.add-workout-card {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+    padding: 8px 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto;
+
+    border-radius: 16px;
+    border: 1px solid var(--teal-accent, #3BBA9C);
+    background: var(--card-bg, #2B2C2F);
+    box-shadow: 0 20px 40px 0 rgba(0, 0, 0, 0.25);
+}
+
+.add-workout-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Workout Title Header */
+.add-workout-header {
+    display: flex;
+    padding: 4px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.add-workout-label {
+    color: var(--primary-font);
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.input-field-workout-title {
+    display: flex;
+    height: 29px;
+    padding: 0 8px;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+
+    border-radius: 8px;
+    border: 1px solid var(--placeholder-font, #5F6368);
+    background: var(--navbar-bg, #1E1F20);
+
+    color: var(--primary-font, #FFF);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-field-workout-title:hover {
+    border-color: rgba(59, 186, 156, 0.6);
+}
+
+.input-field-workout-title:focus {
+    border-color: var(--teal-accent, #3BBA9C);
+    box-shadow: 0 0 8px rgba(59, 186, 156, 0.25);
+}
+
+/* Exercise Cards */
+.exercise-input-card {
+    display: flex;
+    width: 100%;
+    padding: 4px 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    border-radius: 12px;
+    border: 1px solid var(--field-label-font);
+    background: var(--navbar-bg);
+}
+
+.exercise-card-header {
+    display: flex;
+    padding: 4px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    align-self: stretch;
+}
+
+.exercise-number {
+    color: var(--Mint-Teal-Accent, #3BBA9C);
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.exercise-select-field {
+    display: flex;
+    height: 30px;
+    padding: 0 8px;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+
+    border-radius: 8px;
+    border: 1px solid var(--placeholder-font, #5F6368);
+    background: var(--navbar-bg);
+
+    color: var(--teal-accent);
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.exercise-select-field:hover {
+    border-color: rgba(59, 186, 156, 0.6);
+}
+
+.exercise-select-field:focus {
+    border-color: var(--teal-accent, #3BBA9C);
+    box-shadow: 0 0 8px rgba(59, 186, 156, 0.25);
+}
+
+/* Sets List & Input Rows */
+.input-sets-list {
+    display: flex;
+    padding: 4px 8px;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.input-set-row {
+    display: flex;
+    padding: 4px 8px;
+    align-items: center;
+    gap: 30px;
+}
+
+.input-set-number {
+    color: var(--field-label-font);
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.input-weight-wrapper,
+.input-reps-wrapper {
+    display: flex;
+    width: 110px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-weight,
+.input-reps {
+    display: flex;
+    height: 36px;
+    padding: 6px 10px;
+    width: 100%;
+    
+    border-radius: 6px;
+    border: 1px solid var(--placeholder-font, #5F6368);
+    background: var(--main-layout-bg, #131314);
+
+    color: var(--primary-font);
+    font-family: Inter;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-weight::placeholder,
+.input-reps::placeholder {
+    color: var(--placeholder-font, #5F6368);
+}
+
+.input-weight:hover,
+.input-reps:hover {
+    border-color: rgba(59, 186, 156, 0.6);
+}
+
+.input-weight:focus,
+.input-reps:focus {
+    border-color: var(--teal-accent, #3BBA9C);
+    box-shadow: 0 0 8px rgba(59, 186, 156, 0.25);
+}
+
+/* Remove arrows in Chrome, Safari, Edge, and Opera */
+.input-weight::-webkit-outer-spin-button,
+.input-weight::-webkit-inner-spin-button,
+.input-reps::-webkit-outer-spin-button,
+.input-reps::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Remove arrows in Firefox */
+.input-weight,
+.input-reps {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Save Workout Button */
+.btn-save {
+    display: flex;
+    width: 284px;
+    height: 40px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 0 auto;
+
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    background: var(--teal-accent, #3BBA9C);
+
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-save:hover {
+    background: #42cbab;
+    box-shadow: 0 0 12px rgba(59, 186, 156, 0.35);
+}
+
+.btn-save-label {
+    color: var(--main-layout-bg);
+    font-family: Iceland;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
 }

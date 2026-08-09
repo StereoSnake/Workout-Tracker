@@ -3,101 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workout Tracker</title>
+    <title>IronSheet - Training History</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="app-container">
-        <nav id="sidebar">
-            <div class="sidebar-header">WORKOUT TRACKER</div>
-            <ul>
-                <li><a href="/">View Log</a></li>
+    <div id="page-wrapper">
+        <!-- Sidebar Navigation-->
+        <aside id="aside-nav">
+            <!-- Ironsheet Navbar Header-->
+            <div class="aside-nav-header">
+                <div class="icon-frame">
+                    <img src="{{ url_for('static', filename='icons/icon-placeholder.svg') }}" class="brand-icon" alt="IronSheet Logo">
+                </div>
+                <span class="brand-name">IronSheet</span>
+            </div>
+
+            <ul class="nav-list">
                 {% if current_user.is_authenticated %}
-                    <li><a href="/add">Add New Workout</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li class="nav-list-item active">
+                        <a href="/">
+                            <img src="{{ url_for('static', filename='icons/training-history.svg') }}" class="nav-icon" alt="Training History">
+                            <span class="label">Training History</span>
+                        </a>
+                    </li>
+                    <li class="nav-list-item">
+                        <a href="/add">
+                            <img src="{{ url_for('static', filename='icons/add-workout.svg') }}" class="nav-icon" alt="Add Workout">
+                            <span class="label">Add Workout</span>
+                        </a>
+                    </li>
+                    <li class="nav-list-item">
+                        <a href="{{ url_for('logout') }}">
+                            <img src="{{ url_for('static', filename='icons/logout.svg') }}" class="nav-icon" alt="Logout">
+                            <span class="label">Logout</span>
+                        </a>
+                    </li>
+                {% else %}
+                    <!-- Unauthenticated Sidebar Navigation -->
+                    <li class="nav-list-item active">
+                        <a href="/">
+                            <img src="{{ url_for('static', filename='icons/login.svg') }}" class="nav-icon" alt="Login">
+                            <span class="label">Login</span>
+                        </a>
+                    </li>
+                    <li class="nav-list-item">
+                        <a href="/register">
+                            <img src="{{ url_for('static', filename='icons/register.svg') }}" class="nav-icon" alt="Register">
+                            <span class="label">Register</span>
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
-        </nav>
+        </aside>
 
-        <main class="content-area">
-            <div class="main-container">
-
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="flash-alert flash-{{ category }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                
-                {% if current_user.is_authenticated %}
-                    <h1>Training History</h1>
-
-                    {% for workout in workouts %}
-                        <div class="workout-card">
-                            <div class="workout-header">
-                                <h2>{{ workout.title }}</h2>
-                                <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn-delete" onclick="return confirm('Delete this workout permanently?')">Delete Workout</button>    
-                                </form>   
-                            </div>
-                            <p class="card-subtitle">Date: {{ workout.date_posted.strftime("%a, %b %d, %Y") }}</p>
-
-                            <div class="exercise-container">
-                                {% for entry in workout.entries %}
-                                    <div class="exercise-group-card">  
-                                        <div class="exercise-name-header">{{ entry.exercise_name }}</div>
-                                        
-                                        <div class="sets-list">
-                                            {% for s in entry.sets %}
-                                                <div class="set-row">
-                                                    <span class="set-number">Set {{ loop.index }}</span>
-                                                    <span class="set-data"><strong>{{ s.weight }}</strong>kg x <strong>{{ s.reps }}</strong> Reps</span>                                                   
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                        
-                                    </div>
-                                {% endfor %}
-                            </div>
+        <!-- Main Content Area Layout -->
+        <main id="main-layout">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-alert flash-{{ category }}">
+                            {{ message }}
                         </div>
                     {% endfor %}
-                
-                {% else %}
-                    <div class="login-card">
-                        <div class="login-header">
-                            <h2>Login to Workout Tracker</h2>
-                        </div>
-                        <p class="form-instruction">Please enter Username and Password</p>
-
-                        <form action="/login" method="POST">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                            <div class="form-group">
-                                <label class="username-label">Username</label>
-                                <input type="text" name="username" required placeholder="Enter Username">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="password-label">Password</label>
-                                <input type="password" name="password" required placeholder="Enter Password">
-                            </div>
-
-                            <button type="submit" class="btn-save">Login</button>
-                        </form>
-
-                        <div class="form-footer">
-                            <span>Don't have an account yet?</span>
-                            <a href="/register">Register here</a>
-                        </div>
-                        
-                    </div>
                 {% endif %}
-                
-            </div>
+            {% endwith %}
+
+            {% if current_user.is_authenticated %}
+                <!-- Authenticated Layout: Training History -->
+                <div class="page-header">
+                    <h1 class="page-header-label">Training History</h1>
+                </div>
+
+                {% for workout in workouts %}
+                    <div class="workout-card">
+                        <div class="workout-card-header">
+                            <h2 class="workout-card-title">{{ workout.title }}</h2>
+                            <form action="{{ url_for('delete_workout', workout_id=workout.id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn-delete" onclick="return confirm('Delete this workout permanently?')">
+                                    <span class="btn-delete-label">Delete Workout</span>
+                                </button>
+                            </form>
+                        </div>
+                        <p class="workout-card-subtitle">{{ workout.date_posted.strftime("%a, %b %d, %Y") }}</p>
+
+                        <div class="exercise-container">
+                            {% for entry in workout.entries %}
+                                <div class="exercise-group-card">
+                                    <div class="exercise-name-header">
+                                        <span class="exercise-name-label">{{ entry.exercise_name }}</span>
+                                    </div>
+                                    <div class="sets-list">
+                                        {% for s in entry.sets %}
+                                            <div class="set-row">
+                                                <span class="set-number">Set {{ loop.index }}:</span>
+                                                <span class="set-data"><strong>{{ s.weight }}kg</strong> x <strong>{{ s.reps }} Reps</strong></span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% else %}
+                <!-- Unauthenticated Layout: Auth Card -->
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2 class="auth-title">Login to IronSheet</h2>
+                        <p class="auth-subtitle">Please enter Username and Password</p>
+                    </div>
+
+                    <form action="/login" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="input-group-username">
+                            <label class="field-label">Username</label>
+                            <input type="text" class="input-field-base" name="username" required placeholder="Enter Username">
+                        </div>
+
+                        <div class="input-group-password">
+                            <label class="field-label">Password</label>
+                            <input type="password" class="input-field-base" name="password" required placeholder="Enter Password">
+                        </div>
+
+                        <button type="submit" class="btn-login">
+                            <span class="btn-label">Login</span>
+                        </button>
+                    </form>
+
+                    <div class="auth-footer-text">
+                        <span>Don't have an Account yet?</span>
+                        <a href="/register">Register here</a>
+                    </div>
+                </div>
+            {% endif %}
         </main>
     </div>
 </body>
