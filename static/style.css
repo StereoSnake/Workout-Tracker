@@ -163,7 +163,7 @@ body {
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    
     align-items: center;
 }
 
@@ -744,23 +744,36 @@ body {
 /* Workout Title Header */
 .add-workout-header {
     display: flex;
+    padding: 8px 0;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.add-workout-title,
+.add-workout-date {
+    display: flex;
     padding: 4px 0;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    align-self: stretch;
+    min-width: 200px; /* Wraps gracefully on mobile screens */
 }
 
-.add-workout-label {
+/* Labels */
+.add-workout-title-label,
+.add-workout-date-label {
     color: var(--primary-font);
-    font-family: Inter;
+    font-family: 'Inter';
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
 }
 
-.input-field-workout-title {
+/* Base Input Styling Shared by Title and Date */
+.input-field-workout-title,
+.input-field-workout-date {
     display: flex;
     height: 29px;
     padding: 0 8px;
@@ -772,20 +785,39 @@ body {
     border: 1px solid var(--placeholder-font, #5F6368);
     background: var(--navbar-bg, #1E1F20);
 
-    color: var(--primary-font, #FFF);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    color: var(--field-label-font);
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.input-field-workout-title:hover {
+/* Hover States */
+.input-field-workout-title:hover,
+.input-field-workout-date:hover {
     border-color: rgba(59, 186, 156, 0.6);
 }
 
-.input-field-workout-title:focus {
+/* Focus States */
+.input-field-workout-title:focus,
+.input-field-workout-date:focus {
     border-color: var(--teal-accent, #3BBA9C);
     box-shadow: 0 0 8px rgba(59, 186, 156, 0.25);
+}
+
+/* Native Date Picker Theme Adjustments */
+.input-field-workout-date {
+    color-scheme: dark; /* Darkens browser native date dropdown popup */
+    cursor: pointer;
+}
+
+/* Inverts calendar icon to match dark theme */
+.input-field-workout-date::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.8);
 }
 
 /* Exercise Cards */

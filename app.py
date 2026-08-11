@@ -44,6 +44,7 @@ class User(db.Model, UserMixin):
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.Date, nullable=False, default=datetime.now(timezone.utc).date)
     date_posted = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)               # Linked to User
 
@@ -131,7 +132,7 @@ def index():
     if current_user.is_authenticated:
         # Fetch ONLY the current user´s workouts
         # Because of the relationships, we just fetch workouts.
-        workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.date_posted.desc()).all()
+        workouts = Workout.query.filter_by(user_id=current_user.id).order_by(Workout.date.desc(), Workout.id.desc()).all()
         return render_template("index.html", workouts=workouts)
     return render_template("index.html")    # Template will handle showing the login form
 
@@ -140,8 +141,19 @@ def index():
 def add_workout():
     if request.method == "POST":
         title = request.form.get("title")
+        workout_date_str = request.form.get("workout_date")
 
-        new_workout = Workout(title=title, user_id=current_user.id) # Assign to user
+        if workout_date_str:
+            workout_date = datetime.strptime(workout_date_str, "%Y-%m-%d").date()
+        else:
+            workout_date = datetime.now(timezone.utc).date()
+
+        new_workout = Workout(           # Assign to user
+            title=title,
+            date=workout_date,
+            user_id=current_user.id
+        )
+        
         db.session.add(new_workout)
         db.session.flush()  #Populates new_workout.id
 

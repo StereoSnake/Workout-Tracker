@@ -85,7 +85,7 @@
                                 </button>
                             </form>
                         </div>
-                        <p class="workout-card-subtitle">{{ workout.date_posted.strftime("%a, %b %d, %Y") }}</p>
+                        <p class="workout-card-subtitle">{{ workout.date.strftime("%a, %b %d, %Y") }}</p>
 
                         <div class="exercise-container">
                             {% for entry in workout.entries %}

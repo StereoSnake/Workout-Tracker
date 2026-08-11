@@ -61,17 +61,30 @@
 
                     <!-- add-workout-header -->
                     <div class="add-workout-header">
-                        <label for="title" class="add-workout-label">Workout Title:</label>
-                        <!-- input-field-workout-title -->
-                        <input 
-                            type="text" 
-                            id="title" 
-                            name="title" 
-                            class="input-field-workout-title" 
-                            placeholder="eg. Chest Day" 
-                            required 
-                            autocomplete="off"
-                        >
+                        <div class="add-workout-title">
+                            <label for="title" class="add-workout-title-label">Workout Title:</label>
+                            <input 
+                                type="text" 
+                                id="title" 
+                                name="title" 
+                                class="input-field-workout-title" 
+                                placeholder="eg. Chest Day" 
+                                required 
+                                autocomplete="off"
+                            >
+                        </div>
+
+                        <!-- add-workout-date -->
+                        <div class="add-workout-date">
+                            <label for="workout_date" class="add-workout-date-label">Date Performed:</label>
+                            <input 
+                                type="date" 
+                                id="workout_date" 
+                                name="workout_date" 
+                                class="input-field-workout-date" 
+                                required
+                            >
+                        </div>
                     </div>
 
                     <!-- exercise-input-card (Repeated for Exercises 1 to 5) -->
@@ -142,6 +155,28 @@
                 </form>
             </div>
         </main>
-    </div>      
+    </div>
+    
+    <script>
+        // Pre-fill the date input with today's local date and enable clicking anywhere on the input to open the calendar picker
+        document.addEventListener("DOMContentLoaded", function() {
+            const dateInput = document.getElementById("workout_date");
+            if (dateInput) {
+                if (!dateInput.value) {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    dateInput.value = `${year}-${month}-${day}`;
+                }
+
+                dateInput.addEventListener("click", function() {
+                    if (typeof this.showPicker === "function") {
+                        this.showPicker();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
